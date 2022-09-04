@@ -1,12 +1,13 @@
 #--library(rjson), to read the json file containing the node attributes--#
-data<-fromJSON(file="HU_genres.json")
+#data<-fromJSON(file="HU_genres.json")
+data<-fromJSON(file="RO_genres.json")
 data
 
 data$`7`
 
 data[8]
 
-musicEdges.df<-data.frame(musicEdges)
+musicEdges.df<-data.frame(MusicPrefEdges)
 music.net<-network(musicEdges.df,matrix.type="edgelist")
 #gplot(music.net)
 
@@ -15,21 +16,6 @@ str(data)
 unlist(data) #--notice the side-by-side placement--#
 
 unique(unlist(data))
-
-data[1][1]
-data[2]
-
-which(unlist(data[1])==unique(unlist(data)))
-which(unlist(data[2])==unique(unlist(data)))
-
-as.vector(unlist(data[1])[1])
-head(data)
-which(as.vector(unlist(data[1]))==unique(unlist(data)))
-which(as.vector(unlist(data[[2]]))==unique(unlist(data)))
-
-which(unique(unlist(data))==intersect(as.vector(unlist(data[1])),unique(unlist(data))))
-which(unique(unlist(data))==intersect(as.vector(unlist(data[2])),unique(unlist(data))))
-which(unique(unlist(data))==intersect(as.vector(unlist(data[3])),unique(unlist(data))))
 
 #--working below:--#
 which(unique(unlist(data)) %in% as.vector(unlist(data[1])))
@@ -43,5 +29,16 @@ y=c(5,7)
 replace(x,y,0)
 
 ##
-#for(i in 1:)
 
+#---for loops take a long time, so we've saved the matrix---#
+#pref.matrix=matrix(0,41773,length(unique(unlist(data))))
+#for(i in 1:41773)
+#{
+#  pr=which(unique(unlist(data)) %in% as.vector(unlist(data[i])))
+#  initial.pr=rep(0,length(unique(unlist(data))))
+#  pref.matrix[i,]=replace(initial.pr,pr,1/length(pr))
+#  
+#}
+#pref.matrix
+
+#write.csv(pref.matrix,"Pref.Matrix.csv")
