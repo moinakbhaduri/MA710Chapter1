@@ -35,20 +35,20 @@ holocaust.simple.undirected.network=asNetwork(holocaust.undirected)
 gplot(holocaust.simple.undirected.network,displaylabels = T)
 
 #---The five number summary for the full network---#
-network.size(holocaust.simple.undirected.network)
-gden(holocaust.simple.undirected.network)
+network.size(holocaust.simple.undirected.network)  #--the size, i.e., the number of nodes--#
+gden(holocaust.simple.undirected.network) #--the density of the network--#
 is.connected(holocaust.simple.undirected.network) #--is the thing connected? Polite inquiry on the network--#
 is_connected(holocaust.undirected,mode = c("strong")) #--is the thing connected? Polite inquiry on the graph--#
-components(holocaust.simple.undirected.network)
+components(holocaust.simple.undirected.network) #--how many "pieces" do we have--#
 max(geodist(component.largest(holocaust.simple.undirected.network,result = "graph"))$gdist)
 diameter(asIgraph(holocaust.simple.undirected.network)) #--another way to get the diameter, asIgraph (from intergraph) converts a network object to a graph object--#
 diameter(holocaust.undirected)
 gtrans(holocaust.simple.undirected.network,mode="graph") #--not well-defined for multigraphs--#
 
 ###--The degree distribution--####
-degree(holocaust.simple.undirected.network)
-fit_power_law(degree(holocaust.simple.undirected.network))
-hist(degree(holocaust.simple.undirected.network),freq = F,main = "Degree distibution, Holocaust (full)",xlab="Degree")
+degree(holocaust.simple.undirected.network,gmode = "graph")
+fit_power_law(degree(holocaust.simple.undirected.network,gmode = "graph"))
+hist(degree(holocaust.simple.undirected.network,gmode = "graph"),freq = F,main = "Degree distibution, Holocaust (full)",xlab="Degree")
 
 #####################
 
@@ -80,7 +80,7 @@ gtrans(holocaust.subset.simple.undirected.network,mode="graph")
 
 is_connected(asIgraph(holocaust.subset.simple.undirected.network))
 
-#------------Hierarchical automacy---#
+#------------Induced automacy---#
 
 tol=seq(0,33,1)
 
@@ -149,7 +149,51 @@ plot(tol,m2[,2],"l",xlab="Tolerance",ylab="Power-law x-minimum")
 plot(tol,m2[,3],"l",xlab="Tolerance",ylab="Power-law KS statistic")
 plot(tol,m2[,4],"l",xlab="Tolerance",ylab="Power-law p-value")
 
+#----Bootstrapping a network model----#
+#----create, first one, then many networks similar to the (full) Holocaust one---#
+#----similar = same number of nodes, edges, same power-law alpha---#
+
+#--Recap our number of nodes:--#
+network.size(holocaust.simple.undirected.network) 
+
+#--Number of edges? Let's check it in two different ways--#
+149*148*0.2597/2
+
+get.edgelist(asIgraph(holocaust.simple.undirected.network))
+dim(get.edgelist(asIgraph(holocaust.simple.undirected.network)))
+
+boot1=sample_fitness_pl(no.of.nodes = 149,no.of.edges = 2864, exponent.out = 3.466, exponent.in = -1, loops = F, multiple = F)
+diameter(boot1)
+components(asNetwork(boot1))
+gtrans(asNetwork(boot1),mode = "graph")
+
+#--Now, let's automate this--#
+boot.strength=100
+boot.summary=matrix(0,boot.strength,3)
+for(i in 1:boot.strength)
+{
+  boot=sample_fitness_pl(no.of.nodes = 149,no.of.edges = 2864, exponent.out = 3.466, exponent.in = -1, loops = F, multiple = F)
+  boot.summary[i,1]=diameter(boot)
+  boot.summary[i,2]=components(asNetwork(boot))
+  boot.summary[i,3]=gtrans(asNetwork(boot),mode = "graph")
+}
+
+boot.summary
+
+hist(boot.summary[,3],freq = F,main="Distribution of clustering coefficients from bootstrapped networks",
+     xlab="Clustering coefficients")
+
+#--An interval estimate (say, 95%)--#
+quantile(boot.summary[,3],0.025)
+quantile(boot.summary[,3],0.975)
 #########################################################################################################
+
+
+
+
+
+
+
 #components(holocaust.subset.network.loops)
 
 library(intergraph)

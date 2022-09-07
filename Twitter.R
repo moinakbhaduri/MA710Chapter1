@@ -1,22 +1,13 @@
 #---library(rtweet)---#
-rtweet_app("AAAAAAAAAAAAAAAAAAAAAL9UgQEAAAAAm11c9Af7Tkq5gDElnWJukdQtFHQ%3D4yGnckvAYy1uEmW6SroSYxTHP9QDwbM7tWjReCYIiqiOZBNpJ4")
-climate <- search_tweets("climate", n=10, include_rts=FALSE, lang="en")
+
 
 auth_setup_default()
-
-rstats <- search_tweets("#rstats", n = 20)
-## create from-to data frame representing retweet/mention/reply connections
-rstats_net <- network_data(rstats, c("retweet","mention","reply"))
-rstats_net
-attr(rstats_net, "idsn")
-rstats_net <- network_graph(rstats)
-plot(rstats_net)
 
 
 JamesWebbSpaceTelescope<- search_tweets("#Webb", n = 500)
 Webb.net<-network_data(JamesWebbSpaceTelescope, c("retweet","mention","reply"))
 Webb.net
-attr(Webb.net, "idsn")
+attr(Webb.net, "idsn") #--To figure out the Twitter names of people--#
 data.frame(attr(Webb.net, "idsn")$sn)
 Webb.network<-network_graph(JamesWebbSpaceTelescope)
 plot(Webb.network)
@@ -66,6 +57,8 @@ Twitter.edges=data.frame(from=Webb.edge.list.type.enlarged[,4],to=Webb.edge.list
 visNetwork(Twitter.nodes,Twitter.edges)
 
 write.csv(Webb.edge.list.type.enlarged,"WebbEdgeListTypeEnlarged.csv") #--just freezing the results, done on August 26, 2022--#
+write.csv(Twitter.nodes,"TwitterNodes.csv")
+write.csv(Twitter.edges,"TwitterEdges.csv")
 ################################################################
 
 #-library(ndtv)--#
@@ -85,4 +78,5 @@ plot(Webb.network, layout=l,
      vertex.size=1, 
      vertex.label.color="black", 
      edge.width=0.5)
+
 
